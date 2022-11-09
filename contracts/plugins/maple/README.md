@@ -9,7 +9,7 @@
 
 Maple is a decentralized corporate credit market. Maple provides capital to institutional borrowers through globally accessible fixed-income yield opportunities.
 
-In short, it allows normal users to lend money to corporate enitities.
+In short, it allows normal users to lend money to corporate entities.
 
 Liquidity Providers (LPs) deposit funds into a Liquidity Pool in order to fund loans and earn yield. In return, they receive an LP token representing their share of the pool.
 
@@ -48,9 +48,9 @@ The `poolLosses` and `interestSum` are moving variables and keep on changing not
 But we dont need to track the poolLosses and interestSum for that. According to the maple pool accounting <img width="703" alt="Screenshot 2022-11-08 at 6 04 36 PM" src="https://user-images.githubusercontent.com/47485188/200564974-88fb4943-5488-4e6f-8761-35cc6478f13b.png">
 So we can just keep track of the liquidityLockerBal+principalOut or in short we can keep track of the refPerTok.
 
-if poolLosses > interestSum => refPerTok will be less than 1 (or 1e18 in our case). So in such an scenario we would directly want to default.
+if poolLosses > interestSum => refPerTok will be less than 1 (or 1e18 in our case). So in such an scenario we would directly want to DISABLE.
 
-But in case of a small loss, where after the **poolLosses < interestSum** and **refPerTok > 1e18**, we can introduce a threshold.
+But in case of a small loss, where the **poolLosses < interestSum** and **refPerTok > 1e18**, we can introduce a threshold.
 
 So suppose if the refPerTok is above 1 but below our threshold (suppose 1.01) then we can change the status to IFFY. If its above 1.01 then even after a loss we can be pretty sure that its a small loss, not much to worry about and we can be SOUND.
 
@@ -73,12 +73,11 @@ One another thing is in maple specially we cannot mark status as DISABLED if cur
 Including interest from lending the lenders also earn MPL rewards.
 As per the documentation, we dont have to call any method for earning rewards.
 The rewards will be deposited directly to the lender's account at the end of each month.
-Sounds pretty weird and inefficient to me but thats what the docs say
 https://maplefinance.gitbook.io/maple/protocol/maple-token-holders/how-can-you-earn-mpl
 
 ### [Excel Sheet](https://docs.google.com/spreadsheets/d/16rY9nHSd32Rf3FKmVDE3ipDHFho17-eb9SVjwxe31Ag/edit?usp=sharing)
 
-This one is mostly rough calculations that I used to review the maple pool accounting. May come of some use to you so I will just keep it here.
+This one is mostly rough calculations that I used to review the maple pool accounting. May come of some use so I will just keep it here.
 
 ## Tests
 
