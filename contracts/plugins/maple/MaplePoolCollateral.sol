@@ -17,7 +17,7 @@ contract MaplePoolCollateral is Collateral {
 
     IERC20Metadata public constant USDC =
         IERC20Metadata(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48); // this is the reference erc20
-    uint192 public constant peg = FIX_ONE; // ahhh benefits of working with a stablecoin as ref
+    uint192 public constant PEG = FIX_ONE; // ahhh benefits of working with a stablecoin as ref
 
     IMaplePool public immutable maplePool;
     address public immutable liquidityLocker;
@@ -29,8 +29,10 @@ contract MaplePoolCollateral is Collateral {
     /// @param maxTradeVolume_ {UoA} The max trade volume, in UoA
     /// @param oracleTimeout_ {s} The number of seconds until a oracle value becomes invalid
     /// @param delayUntilDefault_ {s} The number of seconds deviation must occur before default
-    /// @param refPerTokThreshold_ minimum refPerTok (above 1e18) (for example, 1.01 * 1e18) below which the pool will start looking IFFY
-    /// @param refThreshold_ A value like 0.05 that represents a deviation tolerance for the ref(usdc) price
+    /// @param refPerTokThreshold_ minimum refPerTok (above 1e18) (for example, 1.01 * 1e18)
+    /// below which the pool will start looking IFFY
+    /// @param refThreshold_ A value like 0.05 that represents a
+    /// deviation tolerance for the ref(usdc) price
     constructor(
         uint192 fallbackPrice_,
         AggregatorV3Interface chainlinkFeed_,
@@ -59,7 +61,7 @@ contract MaplePoolCollateral is Collateral {
         maplePool = IMaplePool(address(erc20_));
         liquidityLocker = maplePool.liquidityLocker();
         refPerTokThreshold = refPerTokThreshold_;
-        refDelta = (peg * refThreshold_) / FIX_ONE;
+        refDelta = (PEG * refThreshold_) / FIX_ONE;
     }
 
     /// update default status.
@@ -75,7 +77,7 @@ contract MaplePoolCollateral is Collateral {
         try chainlinkFeed.price_(oracleTimeout) returns (uint192 p) {
             // If the price is below the default-threshold price, default eventually
             // uint192(+/-) is the same as Fix.plus/minus
-            if (p < peg - refDelta || p > peg + refDelta) {
+            if (p < PEG - refDelta || p > PEG + refDelta) {
                 refPriceStatus = CollateralStatus.IFFY;
             }
         } catch (bytes memory errData) {
